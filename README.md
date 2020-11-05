@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Marie-2.0-English
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
@@ -175,3 +176,6 @@ it is necessary to migrate it in the db.
 
 The `__stats__()` function is for retrieving module statistics, eg number of users, number of chats. This is accessed 
 through the `/stats` command, which is only available to the bot owner.
+=======
+# BookZone_helper
+>>>>>>> 81bb7312b29e196fb3cda9fb8ad2b23c1be57ce3
