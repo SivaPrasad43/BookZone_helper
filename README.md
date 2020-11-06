@@ -1,10 +1,12 @@
-# Marie-2.0-English
+# tgbot
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
-Originally a simple group management bot with multiple admin features, it has evolved, becoming extremely modular and
+Originally a simple group management bot with multiple admin features, it has evolved, becoming extremely modular and 
 simple to use.
 
 Can be found on telegram as [Marie](https://t.me/BanhammerMarie_bot).
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/SpEcHiDe/PSonOfLars_BHMarie)
 
 Marie and I are moderating a [support group](https://t.me/MarieSupport), where you can ask for help setting up your
 bot, discover/request new features, report bugs, and stay in the loop whenever a new update is available. Of course
@@ -15,9 +17,13 @@ announcements.
 
 Alternatively, [find me on telegram](https://t.me/SonOfLars)! (Keep all support questions in the support chat, where more people can help you.)
 
-## You can also tap the Deploy To Heroku button below to deploy straight to Heroku!
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/SivaPrasad43/BookZone_helper)
+## IMPORTANT NOTICE:
+
+This project is no longer under active maintenance. Occasional bug fixes may be released, but no new features are scheduled to be added.
+Users of [Marie](https://t.me/BanhammerMarie_bot) are encouraged to migrate to [PyroGramBot](https://t.me/OwneRoBot), which
+is the improved version of this project, written in PyroGram, with the intention to avoid various BOT API hiccups, and to protect group chats from (user)bots, floods and even lifeless losers.
+
 
 ## Starting the bot.
 
@@ -35,11 +41,11 @@ This is because markdown parsing is done by iterating through a dict, which are 
 There are two possible ways of configuring your bot: a config.py file, or ENV variables.
 
 The prefered version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
-This file should be placed in your `tg_bot` folder, alongside the `__main__.py` file .
-This is where your bot token will be loaded from, as well as your database URI (if you're using a database), and most of
+This file should be placed in your `tg_bot` folder, alongside the `__main__.py` file . 
+This is where your bot token will be loaded from, as well as your database URI (if you're using a database), and most of 
 your other settings.
 
-It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all
+It is recommended to import sample_config and extend the Config class, as this will ensure your config contains all 
 defaults set in the sample_config, hence making it easier to upgrade.
 
 An example `config.py` file could be:
@@ -48,8 +54,8 @@ from tg_bot.sample_config import Config
 
 
 class Development(Config):
-    OWNER_ID = 570400686  # my telegram ID
-    OWNER_USERNAME = "Anandus"  # my telegram username
+    OWNER_ID = 254318997  # my telegram ID
+    OWNER_USERNAME = "SonOfLars"  # my telegram username
     API_KEY = "your bot api key"  # my api key, as provided by the botfather
     SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@localhost:5432/database'  # sample db credentials
     MESSAGE_DUMP = '-1234567890' # some group chat that your bot is a member of
@@ -68,7 +74,7 @@ The following env variables are supported:
  - `OWNER_USERNAME`: Your username
 
  - `DATABASE_URL`: Your database URL
- - `MESSAGE_DUMP`: optional: a chat where your replied saved messages are stored, to stop people deleting their old
+ - `MESSAGE_DUMP`: optional: a chat where your replied saved messages are stored, to stop people deleting their old 
  - `LOAD`: Space separated list of modules you would like to load
  - `NO_LOAD`: Space separated list of modules you would like NOT to load
  - `WEBHOOK`: Setting this to ANYTHING will enable webhooks when in env mode
@@ -85,7 +91,7 @@ The following env variables are supported:
  - `DEL_CMDS`: Whether to delete commands from users which don't have rights to use that command
  - `STRICT_GBAN`: Enforce gbans across new groups as well as old groups. When a gbanned user talks, he will be banned.
  - `WORKERS`: Number of threads to use. 8 is the recommended (and default) amount, but your experience may vary.
- __Note__ that going crazy with more threads wont necessarily speed up your bot, given the large amount of sql data
+ __Note__ that going crazy with more threads wont necessarily speed up your bot, given the large amount of sql data 
  accesses, and the way python asynchronous calls work.
  - `BAN_STICKER`: Which sticker to use when banning people.
  - `ALLOW_EXCL`: Whether to allow using exclamation marks ! for commands as well as /.
@@ -170,8 +176,8 @@ commands will allow the bot to load it and add the documentation for
 your module to the `/help` command. Setting the `__mod_name__` variable will also allow you to use a nicer, user
 friendly name for a module.
 
-The `__migrate__()` function is used for migrating chats - when a chat is upgraded to a supergroup, the ID changes, so
+The `__migrate__()` function is used for migrating chats - when a chat is upgraded to a supergroup, the ID changes, so 
 it is necessary to migrate it in the db.
 
-The `__stats__()` function is for retrieving module statistics, eg number of users, number of chats. This is accessed
+The `__stats__()` function is for retrieving module statistics, eg number of users, number of chats. This is accessed 
 through the `/stats` command, which is only available to the bot owner.
