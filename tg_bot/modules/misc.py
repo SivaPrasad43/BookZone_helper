@@ -6,12 +6,11 @@ from typing import Optional, List
 
 import requests
 from telegram import Message, Chat, Update, Bot, MessageEntity
-from telegram import ParseMode, ReplyKeyboardRemove, ReplyKeyboardMarkup
+from telegram import ParseMode
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
-from tg_bot.__main__ import GDPR
 from tg_bot.__main__ import STATS, USER_INFO
 from tg_bot.modules.disable import DisableAbleCommandHandler
 from tg_bot.modules.helper_funcs.extraction import extract_user
@@ -200,43 +199,6 @@ def get_id(bot: Bot, update: Update, args: List[str]):
                     escape_markdown(user1.first_name),
                     user1.id),
                 parse_mode=ParseMode.MARKDOWN)
-        elif update.effective_message.reply_to_message:
-            m1 = update.effective_message.reply_to_message
-            if m1.audio:
-                update.effective_message.reply_text(
-                    "The audio message has file id `{}`".format(escape_markdown(m1.audio.file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
-            elif m1.document:
-                update.effective_message.reply_text(
-                    "The document message has file id `{}`".format(escape_markdown(m1.document.file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
-            # elif m1.animation:
-            #     update.effective_message.reply_text(
-            #         "The animation message has file id `{}`".format(escape_markdown(m1.animation.file_id)),
-            #         parse_mode=ParseMode.MARKDOWN
-            #     )
-            elif m1.photo:
-                update.effective_message.reply_text(
-                    "The HQ photo has file id `{}`".format(escape_markdown(m1.photo[-1].file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
-            elif m1.video:
-                update.effective_message.reply_text(
-                    "The video message has file id `{}`".format(escape_markdown(m1.video.file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
-            elif m1.voice:
-                update.effective_message.reply_text(
-                    "The voice message has file id `{}`".format(escape_markdown(m1.voice.file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
-            elif m1.video_note:
-                update.effective_message.reply_text(
-                    "The video note has file id `{}`".format(escape_markdown(m1.video_note.file_id)),
-                    parse_mode=ParseMode.MARKDOWN
-                )
         else:
             user = bot.get_chat(user_id)
             update.effective_message.reply_text("{}'s id is `{}`.".format(escape_markdown(user.first_name), user.id),
@@ -361,21 +323,6 @@ def echo(bot: Bot, update: Update):
 
 
 @run_async
-def reply_keyboard_remove(bot: Bot, update: Update):
-    reply_markup = ReplyKeyboardRemove()
-    old_message = bot.send_message(
-        chat_id=update.message.chat_id,
-        text='trying',
-        reply_markup=reply_markup,
-        reply_to_message_id=update.message.message_id
-    )
-    bot.delete_message(
-        chat_id=update.message.chat_id,
-        message_id=old_message.message_id
-    )
-
-
-@run_async
 def gdpr(bot: Bot, update: Update):
     update.effective_message.reply_text("Deleting identifiable data...")
     for mod in GDPR:
@@ -429,6 +376,42 @@ def markdown_help(bot: Bot, update: Update):
 def stats(bot: Bot, update: Update):
     update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
+@run_async
+def stickerid(bot: Bot, update: Update):
+    msg = update.effective_message
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        update.effective_message.reply_text("Hello " +
+                                            "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+                                            + ", The sticker id you are replying is :\n```" + 
+                                            escape_markdown(msg.reply_to_message.sticker.file_id) + "```",
+                                            parse_mode=ParseMode.MARKDOWN)
+    else:
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get id sticker",
+                                            parse_mode=ParseMode.MARKDOWN)
+@run_async
+def getsticker(bot: Bot, update: Update):
+    msg = update.effective_message
+    chat_id = update.effective_chat.id
+    if msg.reply_to_message and msg.reply_to_message.sticker:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please check the file you requested below."
+                                            "\nPlease use this feature wisely!",
+                                            parse_mode=ParseMode.MARKDOWN)
+        bot.sendChatAction(chat_id, "upload_document")
+        file_id = msg.reply_to_message.sticker.file_id
+        newFile = bot.get_file(file_id)
+        newFile.download('sticker.png')
+        bot.sendDocument(chat_id, document=open('sticker.png', 'rb'))
+        bot.sendChatAction(chat_id, "upload_photo")
+        bot.send_photo(chat_id, photo=open('sticker.png', 'rb'))
+        
+    else:
+        bot.sendChatAction(chat_id, "typing")
+        update.effective_message.reply_text("Hello " + "[{}](tg://user?id={})".format(msg.from_user.first_name,
+                                            msg.from_user.id) + ", Please reply to sticker message to get sticker image",
+                                            parse_mode=ParseMode.MARKDOWN)
 
 # /ip is for private use
 __help__ = """
@@ -438,9 +421,9 @@ __help__ = """
  - /time <place>: gives the local time at the given place.
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
-
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
- - /removebotkeyboard: similar functionality of @RemoveKeyboardBot ഒരു കുടക്കീഴില്‍ 
+ - /stickerid: reply to a sticker and get sticker id of that.
+ - /getsticker: reply to a sticker and get that sticker as .png and image. 
 """
 
 __mod_name__ = "Misc"
@@ -460,6 +443,10 @@ MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.
 STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
 
+STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
+GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
+
+
 dispatcher.add_handler(ID_HANDLER)
 dispatcher.add_handler(IP_HANDLER)
 dispatcher.add_handler(TIME_HANDLER)
@@ -470,5 +457,5 @@ dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
 dispatcher.add_handler(STATS_HANDLER)
 dispatcher.add_handler(GDPR_HANDLER)
-
-dispatcher.add_handler(DisableAbleCommandHandler("removebotkeyboard", reply_keyboard_remove))
+dispatcher.add_handler(STICKERID_HANDLER)
+dispatcher.add_handler(GETSTICKER_HANDLER)

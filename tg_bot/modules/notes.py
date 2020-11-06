@@ -58,7 +58,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
         if note.is_reply:
             if MESSAGE_DUMP:
                 try:
-                    bot.forward_message(chat_id=update.effective_chat.id, from_chat_id=MESSAGE_DUMP, message_id=note.value)
+                    bot.forward_message(chat_id=chat_id, from_chat_id=MESSAGE_DUMP, message_id=note.value)
                 except BadRequest as excp:
                     if excp.message == "Message to forward not found":
                         message.reply_text("This message seems to have been lost - I'll remove it "
@@ -68,7 +68,7 @@ def get(bot, update, notename, show_none=True, no_format=False):
                         raise
             else:
                 try:
-                    bot.forward_message(chat_id=update.effective_chat.id, from_chat_id=chat_id, message_id=note.value)
+                    bot.forward_message(chat_id=chat_id, from_chat_id=chat_id, message_id=note.value)
                 except BadRequest as excp:
                     if excp.message == "Message to forward not found":
                         message.reply_text("Looks like the original sender of this note has deleted "
@@ -96,11 +96,11 @@ def get(bot, update, notename, show_none=True, no_format=False):
 
             try:
                 if note.msgtype in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
-                    bot.send_message(update.effective_chat.id, text, reply_to_message_id=reply_id,
+                    bot.send_message(chat_id, text, reply_to_message_id=reply_id,
                                      parse_mode=parseMode, disable_web_page_preview=should_preview_disabled,
                                      reply_markup=keyboard)
                 else:
-                    ENUM_FUNC_MAP[note.msgtype](update.effective_chat.id, note.file, caption=text, reply_to_message_id=reply_id,
+                    ENUM_FUNC_MAP[note.msgtype](chat_id, note.file, caption=text, reply_to_message_id=reply_id,
                                                 parse_mode=parseMode, disable_web_page_preview=should_preview_disabled,
                                                 reply_markup=keyboard)
 
@@ -222,7 +222,7 @@ def list_notes(bot: Bot, update: Update):
     if not conn == False:
         chat_id = conn
         chat_name = dispatcher.bot.getChat(conn).title
-        msg = "*Notes in {}:*\n".format(chat_name)
+        msg = "*Notes in {}:*\n"
     else:
         chat_id = update.effective_chat.id
         if chat.type == "private":
@@ -230,7 +230,7 @@ def list_notes(bot: Bot, update: Update):
             msg = "*Local Notes:*\n"
         else:
             chat_name = chat.title
-            msg = "*Notes in {}:*\n".format(chat_name)
+            msg = "*Notes in {}:*\n"
 
     note_list = sql.get_all_chat_notes(chat_id)
 
