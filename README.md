@@ -18,12 +18,16 @@ announcements.
 Alternatively, [find me on telegram](https://t.me/SonOfLars)! (Keep all support questions in the support chat, where more people can help you.)
 
 
+<<<<<<< HEAD
 ## IMPORTANT NOTICE:
 
 This project is no longer under active maintenance. Occasional bug fixes may be released, but no new features are scheduled to be added.
 Users of [Marie](https://t.me/BanhammerMarie_bot) are encouraged to migrate to [PyroGramBot](https://t.me/OwneRoBot), which
 is the improved version of this project, written in PyroGram, with the intention to avoid various BOT API hiccups, and to protect group chats from (user)bots, floods and even lifeless losers.
 
+=======
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/SivaPrasad43/BookZone_helper)
+>>>>>>> 4319c0055bdee9675f491f4d2663b826b4c2e8c7
 
 ## Starting the bot.
 
